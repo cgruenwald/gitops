@@ -9,7 +9,7 @@ resources:
 - base/argo-cd-certificate.yaml
 - base/argo-cd-ui-ingress.yaml
 # - base/argo-cd-servicemonitors.yaml
-- https://raw.githubusercontent.com/argoproj/argo-cd/v2.13.2/manifests/ha/install.yaml
+- https://raw.githubusercontent.com/argoproj/argo-cd/v2.13.3/manifests/ha/install.yaml
 
 
 # patches:
