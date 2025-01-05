@@ -1,0 +1,67 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
+  project: default
+  sources:
+    - chart: ingress-nginx
+      repoURL: https://kubernetes.github.io/ingress-nginx
+      targetRevision: v4.11.4
+      helm:
+        values: |
+          controller:
+            metrics:
+              port: 10254
+              portName: metrics
+              enabled: true
+              service:
+                annotations:
+                  prometheus.io/scrape: "true"
+                  prometheus.io/port: "10254"
+
+            use-forwarded-headers: "true"
+            compute-full-forwarded-for: "true"
+            allowSnippetAnnotations: "true"
+            extraArgs:
+              enable-ssl-passthrough: "true"
+            kind: Deployment
+            replicaCount: 3
+            service:
+              annotations:
+                load-balancer.hetzner.cloud/use-private-ip: "false"
+                load-balancer.hetzner.cloud/health-check-interval: 15s
+                load-balancer.hetzner.cloud/health-check-retries: "3"
+                load-balancer.hetzner.cloud/health-check-timeout: 10s
+                load-balancer.hetzner.cloud/ipv6-disabled: "false"
+                load-balancer.hetzner.cloud/location: fsn1
+                load-balancer.hetzner.cloud/name: opendesk-lb1
+                load-balancer.hetzner.cloud/type: lb11
+              enabled: true
+              ports:
+                http: 80
+                https: 443
+                imaps: 933
+                pop3s: 995
+                mysql: 3306
+              targetPorts:
+                http: http
+                https: https
+                imaps: imaps
+                pop3s: pop3s
+                mysql: mysql
+            watchIngressWithoutClass: "true"
+          tcp:
+            3306: opendesk-apps/mariadb:3306
+            993: opendesk-apps/dovecot-external:993
+            995: opendesk-apps/dovecot-external:995
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
+
+

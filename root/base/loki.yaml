@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: loki
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 6.23.0
+    helm:
+      values: |
+        loki:
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: MINIO_ACCESS_KEY
+
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secret
+                  key: MINIO_SECRET_KEY
+          config:
+
+            storage_config:
+              aws:
+                s3: https://s3.apps.okd.raynetone.com
+                s3forcepathstyle: true
+              tsdb_shipper:
+                active_index_directory: /loki/index
+                cache_location: /loki/index_cache
+                cache_ttl: 24h
+
+             schema_config:
+              configs:
+                - from: 2020-07-01
+                  store: tsdb
+                  object_store: s3
+                  schema: v13
+                  index:
+                    prefix: index_
+                    period: 24h
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: loki
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

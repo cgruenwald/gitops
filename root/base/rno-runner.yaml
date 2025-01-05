@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: raynetone-runner
+  namespace: argocd
+spec:
+  destination:
+    namespace: raynetone-runner
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: .
+    repoURL: https://gitlab.raynet.de/raynet-one/helm/runner.git
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+      - values.yaml
+      valuesObject:
+        podSecurityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+            - NET_RAW
+          #            drop:
+          #            - ALL
+          runAsUser: 1000
+          fsGroup: 1000
+          runAsNonRoot: false
+          allowPrivilegeEscalation: true
+        configMap:
+          ServiceSettings__BackendServerApiUrl: "https://rno-dev-23-backend.raynetone.com"
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true

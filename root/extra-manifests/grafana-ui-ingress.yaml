@@ -1,0 +1,38 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: kube-prometheus-stack
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: grafana.opendesk.raynet.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kube-prometheus-stack-grafana
+            port:
+              number: 3000
+  tls:
+  - hosts:
+    - grafana.opendesk.raynet.de
+    secretName: grafana-ui-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-ui-cert
+  namespace: kube-prometheus-stack
+spec:
+  secretName: grafana-ui-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: grafana.opendesk.raynet.de
+  dnsNames:
+  - grafana.opendesk.raynet.de
+...

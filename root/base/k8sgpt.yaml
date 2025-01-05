@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8sgpt
+  namespace: argocd
+spec:
+  destination:
+    namespace: k8sgpt-operator-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: k8sgpt
+    repoURL: https://gitlab.raynet.de/opendesk/deployment/supplements.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true

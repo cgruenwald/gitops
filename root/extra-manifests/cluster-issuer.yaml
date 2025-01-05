@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: admin@raynet.de
+    privateKeySecretRef:
+      name: letsencrypt-prod-raynet-de
+    server: 'https://acme-v02.api.letsencrypt.org/directory'
+    solvers:
+      - dns01:
+          webhook:
+            config:
+              apiUrl: 'https://dns.hetzner.com/api/v1'
+              secretName: hetzner-secret
+              zoneName: raynet.de
+            groupName: acme.raynet.de
+            solverName: hetzner

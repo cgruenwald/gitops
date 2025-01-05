@@ -1,0 +1,23 @@
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: trivy-operator-group
+  namespace: trivy-system
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: trivy-operator-subscription
+  namespace: trivy-system
+spec:
+  channel: alpha
+  name: trivy-operator
+  source: operatorhubio-catalog
+  sourceNamespace: olm
+  installPlanApproval: Automatic
+  config:
+    env:
+    - name: OPERATOR_EXCLUDE_NAMESPACES
+      value: "kube-system"
+...

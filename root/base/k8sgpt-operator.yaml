@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8sgpt-operator
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
+  project: default
+  sources:
+    - chart: k8sgpt-operator
+      repoURL: https://charts.k8sgpt.ai/
+      targetRevision: v0.2.4
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: k8sgpt-operator-system

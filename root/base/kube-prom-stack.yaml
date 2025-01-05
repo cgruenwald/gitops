@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+spec:
+  project: default
+  source:
+    chart: kube-prometheus-stack
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 66.x.x
+    helm:
+      values: |
+        crds:
+          enabled: false
+        cleanPrometheusOperatorObjectNames: true
+        prometheus:
+          prometheusSpec:
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: ceph-filesystem
+                  accessModes: ["ReadWriteMany"]
+                  resources:
+                    requests:
+                      storage: 90Gi
+            serviceMonitorSelectorNilUsesHelmValues: true
+            serviceMonitorSelector: {}
+            serviceMonitorNamespaceSelector: {}
+        prometheus-node-exporter:
+           hostRootFsMount:
+             enabled: false
+        prometheusOperator:
+           admissionWebhooks:
+             failurePolicy: Ignore
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-prometheus-stack
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - ServerSideApply=true
+    - CreateNamespace=true
