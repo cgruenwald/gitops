@@ -25,3 +25,5 @@ spec:
     kind: Deployment
     jsonPointers:
     - /spec/replicas
+  - kind: VMServiceScrape
+    name: "*"
