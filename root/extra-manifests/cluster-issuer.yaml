@@ -4,9 +4,9 @@ metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: admin@raynet.de
+    email: admin@sts34.de
     privateKeySecretRef:
-      name: letsencrypt-prod-raynet-de
+      name: letsencrypt-prod
     server: 'https://acme-v02.api.letsencrypt.org/directory'
     solvers:
       - dns01:
@@ -14,6 +14,6 @@ spec:
             config:
               apiUrl: 'https://dns.hetzner.com/api/v1'
               secretName: hetzner-secret
-              zoneName: raynet.de
-            groupName: acme.raynet.de
+              zoneName: sts34.de
+            groupName: acme.sts34.de
             solverName: hetzner

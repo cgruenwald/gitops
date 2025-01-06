@@ -12,7 +12,7 @@ spec:
   sources:
     - chart: local-ai
       repoURL: https://go-skynet.github.io/helm-charts/
-      targetRevision: 3.4.2 # Replace with the Longhorn version you'd like to install or upgrade to
+      targetRevision: 3.4.2
       helm:
         values: |
           replicaCount: 1

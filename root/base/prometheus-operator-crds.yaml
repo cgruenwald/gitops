@@ -15,4 +15,4 @@ spec:
     - CreateNamespace=true
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-prometheus-stack
+    namespace: monitoring
